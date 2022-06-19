@@ -31,6 +31,7 @@ class UserServiceImplTest {
     public static final String PASSWORD = "123";
     public static final String OBJECT_NOT_FOUND = "Object not found";
     public static final int INDEX = 0;
+    public static final String E_MAIL_ALREADY_EXISTS = "E-mail already exists";
     @InjectMocks
     private UserServiceImpl service;
 
@@ -106,7 +107,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void whenCreateThenReturnADAtaIntegrityViolationException() {
+    void whenCreateThenReturnADataIntegrityViolationException() {
         when(repository.findByEmail(anyString())).thenReturn(optionalUser);
 
         try {
@@ -114,12 +115,35 @@ class UserServiceImplTest {
             service.create(userDTO);
         } catch (Exception ex){
             assertEquals(DataIntegrityViolationException.class, ex.getClass());
-            assertEquals("E-mail already exists", ex.getMessage());
+            assertEquals(E_MAIL_ALREADY_EXISTS, ex.getMessage());
         }
     }
 
     @Test
-    void update() {
+    void whenUpdateThenReturnSuccess() {
+        when(repository.save(any())).thenReturn(user);
+
+        User response = service.update(userDTO);
+
+        assertNotNull(response);
+        assertEquals(User.class, response.getClass());
+        assertEquals(ID, response.getId());
+        assertEquals(NAME, response.getName());
+        assertEquals(EMAIL, response.getEmail());
+        assertEquals(PASSWORD, response.getPassword());
+    }
+
+    @Test
+    void whenUpdateThenReturnADataIntegrityViolationException() {
+        when(repository.findByEmail(anyString())).thenReturn(optionalUser);
+
+        try {
+            optionalUser.get().setId(2);
+            service.create(userDTO);
+        } catch (Exception ex){
+            assertEquals(DataIntegrityViolationException.class, ex.getClass());
+            assertEquals(E_MAIL_ALREADY_EXISTS, ex.getMessage());
+        }
     }
 
     @Test
