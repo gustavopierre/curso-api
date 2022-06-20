@@ -32,8 +32,8 @@ class UserResourceTest {
     public static final String OBJECT_NOT_FOUND = "Object not found";
     public static final int INDEX = 0;
     public static final String E_MAIL_ALREADY_EXISTS = "E-mail already exists";
-    private User user;
-    private UserDTO userDTO;
+    private User user = new User();
+    private UserDTO userDTO = new UserDTO();
 
     @InjectMocks
     private UserResource resource;
